@@ -38,16 +38,16 @@ void setup()
   Serial.print("Estimated time (ms): ");
   Serial.println(pcr.timeLeft());
 
+  bool flagFive = false;
   while (pcr.iterationsLeft() > 0)
   {
-    bool flag = false;
     float temp = getTemperature();
     pcr.process(temp);
 
     //  increase time for last 5 iterations.
-    if ((pcr.iterationsLeft() == 5) && (flag == false))
+    if ((pcr.iterationsLeft() == 5) && (flagFive == false))
     {
-      flag = true;
+      flagFive = true;
       pcr.setDenature(94.5, 7500);    //  temp, ms
       pcr.setAnnealing(54.2, 4000);   //  temp, ms
       pcr.setExtension(75.0, 5000);   //  temp, ms
