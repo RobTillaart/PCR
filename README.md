@@ -32,15 +32,15 @@ main PCR cycles.
 In short a PCR cycle is a process of controlled heating and cooling to let DNA "reproduce"
 to get large quantities. Roughly the amount doubles in every cycle (of step 2,3,4).
 
-This process exists of repeated cycles of the three main steps. (times and temp from wikipedia)
+This process exists of repeated cycles of the three main steps. (times and temp from Wikipedia)
 
 | step |  name           |  temperature range    |  time range  |
 |:----:|:----------------|:----------------------|:------------:|
 |  1   | Initialization  |  94–98°C = 201–208°F  |  00–10 min.  |
 |  2   | Denaturation    |  94–98°C = 201–208°F  |  20–30 sec.  |
 |  3   | Annealing       |  50–65°C = 122–149°F  |  20–40 sec.  |
-|  4   | Extension       |  70–80°C = 158–176°F  |  ?           |
-|  5   | Elongation      |  70–80°C = 158–176°F  |  05–15 min.  |
+|  4   | Extension       |  75–80°C = 167–176°F  |  ? (60 sec?) |
+|  5   | Elongation      |  70–74°C = 158–165°F  |  05–15 min.  |
 |  6   | Final Hold      |   4–15°C =  39–59°F   | indefinitely |
 
 The PCR function **process()** takes care of the repeating of step 2,3 and 4.
@@ -118,7 +118,7 @@ Some examples:
 
 #### Constructor
 
-- **PCR(uint8_t heatPin, uint8_t coolPin)** constructor defines the haredware pins to which 
+- **PCR(uint8_t heatPin, uint8_t coolPin)** constructor defines the hardware pins to which 
 the heater and cooler are connected.
 - **void reset(int iterations)** full stop of the process, also stops heating and cooling,
 resets the state to IDLE and defines the number of iterations for the next run.
@@ -136,7 +136,7 @@ Returns the value in milliseconds.
 
 #### Initial phase
 
-Temperatures are in °Celsius, timing is in milliseconds.  
+Temperatures are in °Celsius, timing is in milliseconds (for 0.2.x version).  
 The timing is the time that the process will be in this state, so it includes
 the time to heat / cool to reach the temperature defined.
 Note that these parameters can change while the process is running. 
@@ -211,17 +211,16 @@ Users can patch this function when needed, or make it empty.
   - **void setAnnealing(float Celsius, float seconds)** Sets temperature and duration.
 - investigate the blocking version
   - void keepTempTime(temp, time, getTemperature());
-- make the 10 milliseconds control pulses configurable (e.g. 10..100 ms)
-- investigate continuous heating (unsafe mode)versus the current pulsed heating(safe mode).
 
 #### Could
 
-- PCR scripting language?
+- PCR scripting language, simple example?
 - add examples
 - optimize code
   - have an array of times and temperatures to go through.
 - stir pin, to control the stirring of the PCR device.
 - add unit tests
+- investigate continuous heating (unsafe mode)versus the current pulsed heating(safe mode).
 
 
 #### Wont

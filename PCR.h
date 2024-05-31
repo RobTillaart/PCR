@@ -94,12 +94,21 @@ public:
     debug();
   }
 
-  int iterationsLeft() { return _cycles; };
+  int iterationsLeft()
+  {
+    return _cycles;
+  }
 
-  //  returns PCR_STATE_HOLD when ready;
+
+  //  returns state ==> PCR_STATE_HOLD when ready;
   uint8_t process(float temperature)
   {
     _temperature = temperature;
+    /*  0.3.0
+    if (_temperature < temp[_state]) heat();
+    else if (_temperature > temp[_state]) cool();
+    else off();
+    */
     switch(_state)
     {
       case PCR_STATE_IDLE:
@@ -258,20 +267,23 @@ protected:
     Serial.print(_startTime);
     Serial.print("\t");
     Serial.print(_cycles);
-    if (_state == PCR_STATE_IDLE) Serial.println("\tIdle");
-    if (_state == PCR_STATE_INITIAL) Serial.println("\tInitialization");
-    if (_state == PCR_STATE_DENATURE) Serial.println("\tDenature");
-    if (_state == PCR_STATE_ANNEALING) Serial.println("\tAnnealing");
-    if (_state == PCR_STATE_EXTENSION) Serial.println("\tExtension");
-    if (_state == PCR_STATE_ELONGATION) Serial.println("\tElongation");
-    if (_state == PCR_STATE_HOLD) Serial.println("\tHOLD");
+    //  use an array?
+    if (_state == PCR_STATE_DENATURE)        Serial.println("\tDenature");
+    else if (_state == PCR_STATE_ANNEALING)  Serial.println("\tAnnealing");
+    else if (_state == PCR_STATE_EXTENSION)  Serial.println("\tExtension");
+    //  less used
+    else if (_state == PCR_STATE_ELONGATION) Serial.println("\tElongation");
+    else if (_state == PCR_STATE_IDLE)       Serial.println("\tIdle");
+    else if (_state == PCR_STATE_INITIAL)    Serial.println("\tInitialize");
+    else if (_state == PCR_STATE_HOLD)       Serial.println("\tHold");
   }
 
 
 /*
-  //  simplify the code.
+  //  simplify the code. 0.3.0
+  //  maybe temperature only?
   float  _temp[6] = { 94, 94, 54, 76, 76, 14 };
-  float  _time[6] = { 0, 1, 1, 1, 1, 0 };
+  float  _time[6] = { 0, 1, 1, 1, 1, -1 };
 */
 
   float    _initialTemp = 94;
