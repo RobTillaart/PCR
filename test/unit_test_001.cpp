@@ -45,9 +45,8 @@ unittest(test_constants)
   assertEqual(PCR_STATE_DENATURE  , 2);
   assertEqual(PCR_STATE_ANNEALING , 3);
   assertEqual(PCR_STATE_EXTENSION , 4);
-  assertEqual(PCR_STATE_EXTENSION , 5);
-  assertEqual(PCR_STATE_ELONGATION, 6);
-  assertEqual(PCR_STATE_HOLD      , 7);
+  assertEqual(PCR_STATE_ELONGATION, 5);
+  assertEqual(PCR_STATE_HOLD      , 6);
 }
 
 
