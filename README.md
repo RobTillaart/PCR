@@ -137,6 +137,8 @@ Returns the value in milliseconds.
 #### Initial phase
 
 Temperatures are in °Celsius, timing is in milliseconds.  
+The timing is the time that the process will be in this state, so it includes
+the time to heat / cool to reach the temperature defined.
 Note that these parameters can change while the process is running. 
 
 - **void setInitial(float Celsius, uint32_t ms)** Sets temperature and duration.
@@ -179,9 +181,14 @@ for final storage.
 
 These are public functions so the user can control these also from their own code.
 
-- **void heat()** switch on the heater for 10 milliseconds.
-- **void cool()** switch on the cooler for 10 milliseconds.
+- **void heat()** switch on the heater for (default) 10 milliseconds.
+- **void cool()** switch on the cooler for (default) 10 milliseconds.
 - **void off()** switch off all.
+- **void setHeatPulseLength(uint16_t ms = 10)** adjust the timing for heat() and cool().
+  - The maximum value is 1000 milliseconds == 1 second. 
+  - The minimum value is 0 milliseconds but it would slow down the heating / cooling.
+- **uint16_t getHeatPulseLength()** returns set value.
+
 
 #### Debug
 

@@ -40,47 +40,47 @@ public:
 
 
   //  PARAMETERS
-  void     setInitial(float temp, uint32_t ms)
+  void     setInitial(float Celsius, uint32_t ms)
   {
-    _initialTemp = temp;
+    _initialTemp = Celsius;
     _initialTime = ms;
   }
   float    getInitialTemp() { return _initialTemp; }
   uint32_t getInitialTime() { return _initialTime; }
 
-  void     setDenature(float temp, uint32_t ms)
+  void     setDenature(float Celsius, uint32_t ms)
   {
-    _denatureTemp = temp;
+    _denatureTemp = Celsius;
     _denatureTime = ms;
   }
   float    getDenatureTemp() { return _denatureTemp; }
   uint32_t getDenatureTime() { return _denatureTime; }
 
-  void     setAnnealing(float temp, uint32_t ms)
+  void     setAnnealing(float Celsius, uint32_t ms)
   {
-    _annealingTemp = temp;
+    _annealingTemp = Celsius;
     _annealingTime = ms;
   }
   float    getAnnealingTemp() { return _annealingTemp; }
   uint32_t getAnnealingTime() { return _annealingTime; }
 
-  void     setExtension(float temp, uint32_t ms)
+  void     setExtension(float Celsius, uint32_t ms)
   {
-    _extensionTemp = temp;
+    _extensionTemp = Celsius;
     _extensionTime = ms;
   }
   float    getExtensionTemp() { return _extensionTemp; }
   float    getExtensionTime() { return _extensionTime; }
 
-  void     setElongation(float temp, uint32_t ms)
+  void     setElongation(float Celsius, uint32_t ms)
   {
-    _elongationTemp = temp;
+    _elongationTemp = Celsius;
     _elongationTime = ms;
   }
   float    getElongationTemp() { return _elongationTemp; }
   float    getElongationTime() { return _elongationTime; }
 
-  void     setHold(float temp) { _holdTemp = temp; }
+  void     setHold(float Celsius) { _holdTemp = Celsius; }
   float    getHoldTemp() { return _extensionTemp; }
 
 
@@ -181,9 +181,9 @@ public:
 
 
   //  HEATER / COOLER CONTROL
-  void setHeatPulseLength(uint16_t len = 10)
+  void setHeatPulseLength(uint16_t ms = 10)
   {
-    if (len > 1000) len = 1000;
+    if (ms > 1000) ms = 1000;
     _heatPulseLength = len;
   }
 
@@ -267,6 +267,12 @@ protected:
     if (_state == PCR_STATE_HOLD) Serial.println("\tHOLD");
   }
 
+
+/*
+  //  simplify the code.
+  float  _temp[6] = { 94, 94, 54, 76, 76, 14 };
+  float  _time[6] = { 0, 1, 1, 1, 1, 0 };
+*/
 
   float    _initialTemp = 94;
   uint32_t _initialTime = 0;
