@@ -3,7 +3,7 @@
 //    FILE: PCR.h
 //  AUTHOR: Rob Tillaart
 //    DATE: 2015-06-10
-// VERSION: 0.2.0
+// VERSION: 0.2.1
 // PURPOSE: Arduino library for PCR process control.
 //     URL: https://github.com/RobTillaart/PCR
 //          https://forum.arduino.cc/t/problem-with-arduino-pcr-amplifies-of-dna/314808
@@ -12,13 +12,13 @@
 
 #include "Arduino.h"
 
-#define PCR_LIB_VERSION         (F("0.2.0"))
+#define PCR_LIB_VERSION         (F("0.2.1"))
 
-enum PCRSTATE { 
-  PCR_STATE_IDLE = 0, 
-  PCR_STATE_INITIAL, 
-  PCR_STATE_DENATURE, 
-  PCR_STATE_ANNEALING, 
+enum PCRSTATE {
+  PCR_STATE_IDLE = 0,
+  PCR_STATE_INITIAL,
+  PCR_STATE_DENATURE,
+  PCR_STATE_ANNEALING,
   PCR_STATE_EXTENSION,
   PCR_STATE_ELONGATION,
   PCR_STATE_HOLD
@@ -119,7 +119,7 @@ public:
           debug();
         }
       break;
-      
+
       case PCR_STATE_DENATURE:
         if (_temperature < _denatureTemp) heat();
         else if (_temperature > _denatureTemp) cool();
@@ -143,7 +143,7 @@ public:
           debug();
         }
       break;
-      
+
       case PCR_STATE_EXTENSION:
         if (_temperature < _extensionTemp) heat();
         else if (_temperature > _extensionTemp) cool();
@@ -157,7 +157,7 @@ public:
           debug();
         }
       break;
-      
+
       case PCR_STATE_ELONGATION:
         if (_temperature < _elongationTemp) heat();
         else if (_temperature > _elongationTemp) cool();
@@ -181,17 +181,29 @@ public:
 
 
   //  HEATER / COOLER CONTROL
+  void setHeatPulseLength(uint16_t len = 10)
+  {
+    if (len > 1000) len = 1000;
+    _heatPulseLength = len;
+  }
+
+  uint16_t getHeatPulseLength()
+  {
+    return _heatPulseLength;
+  }
+
+
   void heat()
   {
     digitalWrite(_heatPin, HIGH);
-    delay(10);
+    delay(_heatPulseLength);
     digitalWrite(_coolPin, LOW);
   }
 
   void cool()
   {
     digitalWrite(_coolPin, HIGH);
-    delay(10);
+    delay(_heatPulseLength);
     digitalWrite(_coolPin, LOW);
   }
 
@@ -231,7 +243,8 @@ public:
     return sum;
   }
 
-private:
+
+protected:
   // development.
   void debug()
   {
@@ -274,6 +287,7 @@ private:
   PCRSTATE _state = PCR_STATE_IDLE;
   int      _cycles = 0;
   uint32_t _startTime = 0;
+  uint16_t _heatPulseLength = 10;  //  milliseconds.
 };
 
 

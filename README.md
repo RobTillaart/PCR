@@ -126,8 +126,7 @@ resets the state to IDLE and defines the number of iterations for the next run.
 and iterates over the DENATURE, ANNEALING and EXTENSION phase. Returns the current state.  
 The user **MUST** provide the actual temperature of the sample so process can heat and cool
 the sample on a need to basis.  
-The user **MUST** call this function as often as possible in a tight loop.
-Returns the current state.  
+The user **MUST** call this function as often as possible in a tight loop. 
 - **int iterationsLeft()** returns the number of iterations left.
 - **uint32_t timeLeft()** estimator of the time left to reach the HOLD state.
 This function assumes that the duration per phase does not change runtime,
@@ -201,6 +200,8 @@ Users can patch this function when needed, or make it empty.
 
 #### Should
 
+- time of phases should be in seconds ==> breaking change
+  - **void setAnnealing(float Celsius, float seconds)** Sets temperature and duration.
 - investigate the blocking version
   - void keepTempTime(temp, time, getTemperature());
 - make the 10 milliseconds control pulses configurable (e.g. 10..100 ms)
