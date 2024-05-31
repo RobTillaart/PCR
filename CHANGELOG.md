@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - add **setHeatPulseLength(uint16_t len)** to modify the pulse length of the heater / cooler.
 - add example **PCR_demo_DS18B20.ino** DS18B20 for PCR.
 - add example **PCR_demo_MAX31855.ino** Thermocouple for PCR.
+- fix examples (URL)
 - fix library.properties category.
 - update readme.md
 

@@ -1,8 +1,8 @@
 //
 //    FILE: PCR_demo_DS18B20.ino
 //  AUTHOR: Rob Tillaart
-// PURPOSE: extended PCR demo, adds initialization, elongation and final hold
-//     URL: https://github.com/RobTillaart/ACD10
+// PURPOSE: PCR demo, using DS18B20 as temperature sensor.
+//     URL: https://github.com/RobTillaart/PCR
 //
 //  adjust pins to your hardware setup.
 

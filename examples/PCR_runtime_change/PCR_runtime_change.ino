@@ -1,8 +1,8 @@
 //
-//    FILE: PCR_demo_extended.ino
+//    FILE: PCR_demo_runtime_change.ino
 //  AUTHOR: Rob Tillaart
-// PURPOSE: extended PCR demo, adds initialization, elongation and final hold
-//     URL: https://github.com/RobTillaart/ACD10
+// PURPOSE: PCR demo, changing parameters run time.
+//     URL: https://github.com/RobTillaart/PCR
 //
 //  adjust timing and temperature.
 
