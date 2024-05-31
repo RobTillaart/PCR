@@ -47,7 +47,7 @@ unittest(test_constants)
   assertEqual(PCR_STATE_EXTENSION , 4);
   assertEqual(PCR_STATE_EXTENSION , 5);
   assertEqual(PCR_STATE_ELONGATION, 6);
-  assertEqual(PCR_STATE_READY     , 7);
+  assertEqual(PCR_STATE_HOLD      , 7);
 }
 
 

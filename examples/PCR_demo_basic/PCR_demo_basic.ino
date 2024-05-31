@@ -23,6 +23,7 @@ void setup()
   Serial.println(__FILE__);
   Serial.print("PCR_LIB_VERSION: ");
   Serial.println(PCR_LIB_VERSION);
+  Serial.println();
 
   pcr.setDenature(94.5, 1000);   //  temp, ms
   pcr.setAnnealing(54.2, 1000);  //  temp, ms
@@ -35,8 +36,8 @@ void setup()
   {
     float temp = getTemperature();
     pcr.process(temp);
-    
-    if (pcr.iterationsLeft() == 0) 
+
+    if (pcr.iterationsLeft() == 0)
     {
       //  optional break out of loop or stay in HOLD state;
       //  display end state reached, ring a bell etc.

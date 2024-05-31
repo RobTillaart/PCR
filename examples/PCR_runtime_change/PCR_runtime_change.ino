@@ -34,14 +34,26 @@ void setup()
   pcr.setElongation(75.0, 3000);  //  temp, ms
   pcr.setHold(8.0);               //  temp only
 
-  pcr.reset(15);  //  iterations.
+  pcr.reset(10);  //  iterations.
   Serial.print("Estimated time (ms): ");
   Serial.println(pcr.timeLeft());
 
   while (pcr.iterationsLeft() > 0)
   {
+    bool flag = false;
     float temp = getTemperature();
     pcr.process(temp);
+
+    //  increase time for last 5 iterations.
+    if ((pcr.iterationsLeft() == 5) && (flag == false))
+    {
+      flag = true;
+      pcr.setDenature(94.5, 7500);    //  temp, ms
+      pcr.setAnnealing(54.2, 4000);   //  temp, ms
+      pcr.setExtension(75.0, 5000);   //  temp, ms
+      Serial.print("Estimated time (ms): ");
+      Serial.println(pcr.timeLeft());
+    }
   }
 
   Serial.println("done");
