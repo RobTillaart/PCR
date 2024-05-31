@@ -40,15 +40,18 @@ unittest_teardown()
 
 unittest(test_constants)
 {
-  assertEqual(PCR_STATE_IDLE     , 0);
-  assertEqual(PCR_STATE_DENATURE , 1);
-  assertEqual(PCR_STATE_ANNEALING, 2);
-  assertEqual(PCR_STATE_EXTENSION, 3);
-  assertEqual(PCR_STATE_READY    , 99);
+  assertEqual(PCR_STATE_IDLE      , 0);
+  assertEqual(PCR_STATE_INITIAL   , 1);
+  assertEqual(PCR_STATE_DENATURE  , 2);
+  assertEqual(PCR_STATE_ANNEALING , 3);
+  assertEqual(PCR_STATE_EXTENSION , 4);
+  assertEqual(PCR_STATE_EXTENSION , 5);
+  assertEqual(PCR_STATE_ELONGATION, 6);
+  assertEqual(PCR_STATE_READY     , 7);
 }
 
 
-unittest(test_constructor)
+unittest(test_constructor_parameters)
 {
   PCR pcr(8,9);
 

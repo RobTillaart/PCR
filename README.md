@@ -30,7 +30,7 @@ This library implements a PCR class that helps to control time and temperatures 
 main PCR cycles.
 
 In short a PCR cycle is a process of controlled heating and cooling to let DNA "reproduce"
-to get large quantities. Roughly the amount doubles in every step.
+to get large quantities. Roughly the amount doubles in every cycle (of step 2,3,4).
 
 This process exists of repeated cycles of the three main steps. (times and temp from wikipedia)
 
@@ -70,6 +70,29 @@ Typical core code looks like:
 **Note:** this library is meant for educational purposes and is not meant to replace professional equipment.
 
 
+#### Hardware notes
+
+The hardware setup needs a device that can be cooled or heated depending on the phase of the cycle.
+Furthermore the hardware setup needs to provide an actual temperature to guide the process.
+This latter can be an DS18B20 especially the waterproof version.
+
+```
+         Processor                            PCR DEVICE
+     +---------------+                    +---------------+
+     |               |                    |               |
+     |               |                    |               |
+     |      heatPin o|------------------->|o HEATER       |
+     |      coolPin o|------------------->|o COOLER       |
+     |               |                    |               |
+     |    getTemp() O|<-------------------|o temperature  |
+     |               |                    |  sensor       |
+     |               |                    |               |
+     |               |                    |               |
+     |               |                    |               |
+     +---------------+                    +---------------+
+```
+
+
 #### Other applications
 
 The PCR class can be used to manage other temperature control processes.
@@ -107,12 +130,15 @@ The user **MUST** call this function as often as possible in a tight loop.
 Returns the current state.  
 - **int iterationsLeft()** returns the number of iterations left.
 - **uint32_t timeLeft()** estimator of the time left to reach the HOLD state.
-Returns the value in milliseconds.
+This function assumes that the duration per phase does not change runtime,
+however it will adapt its estimate.
+Returns the value in milliseconds. 
 
 
 #### Initial phase
 
-Temperatures are in °Celsius, timing is in milliseconds.
+Temperatures are in °Celsius, timing is in milliseconds.  
+Note that these parameters can change while the process is running. 
 
 - **void setInitial(float Celsius, uint32_t ms)** Sets temperature and duration.
 - **float getInitialTemp()** returns set value.
@@ -152,6 +178,8 @@ for final storage.
 
 #### Heater, cooler control
 
+These are public functions so the user can control these also from their own code.
+
 - **void heat()** switch on the heater for 10 milliseconds.
 - **void cool()** switch on the cooler for 10 milliseconds.
 - **void off()** switch off all.
@@ -173,19 +201,22 @@ Users can patch this function when needed, or make it empty.
 
 #### Should
 
-- optimize code
 - investigate the blocking version
-  - void keepTempTime(temp, time, gettemp());
-- add examples
-
+  - void keepTempTime(temp, time, getTemperature());
+- make the 10 milliseconds control pulses configurable (e.g. 10..100 ms)
+- investigate continuous heating (unsafe mode)versus the current pulsed heating(safe mode).
 
 #### Could
 
+- add examples
+- optimize code
+  - have an array of times and temperatures to go through.
+- stir pin, to control the stirring of the PCR device.
 - add unit tests
-- have an array of times and temperatures to go through?
 
 
 #### Wont
+- add callback function when ready (user can check state)
 
 
 ## Support
