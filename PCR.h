@@ -184,7 +184,7 @@ public:
   void setHeatPulseLength(uint16_t ms = 10)
   {
     if (ms > 1000) ms = 1000;
-    _heatPulseLength = len;
+    _heatPulseLength = ms;
   }
 
   uint16_t getHeatPulseLength()
