@@ -223,11 +223,11 @@ public:
   uint32_t timeLeft()
   {
     uint32_t sum = 0;
-    if (state < PCR_STATE_DENATURE) sum += _initialTime;
+    if (_state < PCR_STATE_DENATURE) sum += _initialTime;
     sum += _denatureTime  * _cycles;
     sum += _annealingTime * _cycles;
     sum += _extensionTime * _cycles;
-    if (state <= PCR_STATE_ELONGATION) sum += _elongationTime;
+    if (_state <= PCR_STATE_ELONGATION) sum += _elongationTime;
     return sum;
   }
 

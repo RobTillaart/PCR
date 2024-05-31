@@ -16,11 +16,8 @@ Arduino library for PCR process control.
 
 ## Description
 
+
 **Experimental**
-
-PCR = Polymerase chain reaction.
-
-This library implements a PCR class that helps to control time and temperatures in a number of PCR cycles.
 
 From wikipedia:
 
@@ -29,6 +26,9 @@ billions of copies of a specific DNA sample rapidly, allowing scientists to ampl
 a very small sample of DNA (or a part of it) sufficiently to enable detailed study. 
 PCR was invented in 1983 by American biochemist Kary Mullis at Cetus Corporation._
 
+This library implements a PCR class that helps to control time and temperatures of the 
+main PCR cycles.
+
 In short a PCR cycle is a process of controlled heating and cooling to let DNA "reproduce"
 to get large quantities. Roughly the amount doubles in every step.
 
@@ -36,12 +36,12 @@ This process exists of repeated cycles of the three main steps. (times and temp 
 
 | step |  name           |  temperature range    |  time range  |
 |:----:|:----------------|:----------------------|:------------:|
-|  1   | Initialization  |  94–98°C = 201–208°F  |  00–10 min.  |
-|  2   | Denaturation    |  94–98°C = 201–208°F  |  20–30 sec.  |
-|  3   | Annealing       |  50–65°C = 122–149°F  |  20–40 sec.  |
-|  4   | Extension       |  70–80°C = 158–176°F  |  ?           |
-|  5   | Elongation      |  70–80°C = 158–176°F  |  05–15 min.  |
-|  6   | Final Hold      |   4–15°C =  39–59°F   | indefinitely |
+|  1   | Initialization  |  94â€“98Â°C = 201â€“208Â°F  |  00â€“10 min.  |
+|  2   | Denaturation    |  94â€“98Â°C = 201â€“208Â°F  |  20â€“30 sec.  |
+|  3   | Annealing       |  50â€“65Â°C = 122â€“149Â°F  |  20â€“40 sec.  |
+|  4   | Extension       |  70â€“80Â°C = 158â€“176Â°F  |  ?           |
+|  5   | Elongation      |  70â€“80Â°C = 158â€“176Â°F  |  05â€“15 min.  |
+|  6   | Final Hold      |   4â€“15Â°C =  39â€“59Â°F   | indefinitely |
 
 The PCR function **process()** takes care of the repeating of step 2,3 and 4.
 
@@ -66,12 +66,17 @@ Typical core code looks like:
   }
 ```
 
+
+**Note:** this library is meant for educational purposes and is not meant to replace professional equipment.
+
+
 #### Other applications
 
 The PCR class can be used to manage other temperature control processes.
 Some examples:
 - control an oven with a thermocouple, (e.g. glass melting)
 - control the temperature of a tropic aquarium to simulate day and night.
+- control an ice making machine.
 
 
 #### Related
@@ -107,7 +112,7 @@ Returns the value in milliseconds.
 
 #### Initial phase
 
-Temperatures are in °Celsius, timing is in milliseconds.
+Temperatures are in Â°Celsius, timing is in milliseconds.
 
 - **void setInitial(float Celsius, uint32_t ms)** Sets temperature and duration.
 - **float getInitialTemp()** returns set value.
