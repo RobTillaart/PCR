@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - fix signature of functions in 0.2.1
 - clean up code (remove commented sections).
 - update readme.md
+- update unittests
 
 ----
 
