@@ -264,19 +264,17 @@ Users can patch this function when needed, or make it empty.
 
 - PCR scripting language, simple example?
 - add examples
-- optimize code
-  - have an array of times and temperatures to go through.
-- add continuous heating (unsafe mode) versus the current pulsed heating(safe mode).
 - add stir pin, to control the stirring of the PCR device.
 - add signalling pin to indicate ready by a buzzer.
-- add unit tests
 
 #### Wont
 
 - add callback function when ready (user can check state)
 - Fahrenheit interface  (C = (F-32) x 5/9.0;  F = C x 9/5.0 + 32;
 - Kelvin or other temperature scale.
-
+- optimize code
+  - have an array of times and temperatures to go through.
+- add continuous heating (unsafe mode) versus the current pulsed heating(safe mode).
 
 ## Support
 
