@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.3.0] - 2024-06-01
+- breaking change 
+  - duration in configuration function to **float seconds** as this is more convenient.
+- fix signature of functions in 0.2.1
+- clean up code (remove commented sections).
+- update readme.md
+
+----
+
 ## [0.2.1] - 2024-05-31
 - add **setHeatPulseLength(uint16_t len)** to modify the pulse length of the heater / cooler.
 - add example **PCR_demo_DS18B20.ino** DS18B20 for PCR.
@@ -16,11 +25,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - update readme.md
 - minor edits
 
-
 ## [0.2.0] - 2024-05-30
 - initial class version (published)
 
 ----
+
 ## [0.1.3] - 2024-05-30
 - initial class version (not published)
 
