@@ -225,7 +225,7 @@ public:
 
   //  blocking version of single step.
   //  to be tested what to do with it
-  //  could be a separate class.
+  //  could be a separate class / stand alone version.
   /*
   void keepTempTime(float temperature, uint32_t ms,  float (*getTemp)())
   {
@@ -310,8 +310,5 @@ protected:
 
 
 //  -- END OF FILE --
-
-
-
 
 

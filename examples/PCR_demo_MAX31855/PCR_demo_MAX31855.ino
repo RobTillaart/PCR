@@ -11,6 +11,7 @@
 PCR pcr(8, 9);  //  heatPin, coolPin
 
 
+//    https://github.com/RobTillaart/MAX31855_RT
 #include "MAX31855.h"
 uint8_t selectPin = 7;
 MAX31855 thermoCouple(selectPin, &SPI);  //  HW SPI

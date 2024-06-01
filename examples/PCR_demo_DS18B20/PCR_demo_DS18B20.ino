@@ -8,13 +8,14 @@
 
 
 #include "PCR.h"
-
 PCR pcr(8, 9);  //  heatPin, coolPin
 
 
+//  https://github.com/RobTillaart/DS18B20_RT
+//  http://www.pjrc.com/teensy/td_libs_OneWire
 #include "DS18B20.h"
 
-#define ONE_WIRE_BUS 2
+#define ONE_WIRE_BUS      2
 
 OneWire oneWire(ONE_WIRE_BUS);
 DS18B20 sensor(&oneWire);
@@ -52,7 +53,7 @@ void setup()
   sensor.requestTemperatures();
   delay(1000);  // wait a second to get a first reading.
 
-  
+
   //  configure PCR process
   //  adjust timing and temperature to your needs.
   pcr.setInitial(98, 10000);      //  temp, ms
