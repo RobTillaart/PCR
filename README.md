@@ -111,6 +111,7 @@ natural order of magnitude than milliseconds.
 Note however that the internal math still is done in milliseconds so one can define
 a step as taking 15.75 seconds = 15750 milliseconds.
 
+Pre 0.3.0 versions are now obsolete.
 
 #### Related
 

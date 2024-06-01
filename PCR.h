@@ -81,7 +81,7 @@ public:
   float    getElongationTime() { return _elongationTime * 0.001; }
 
   void     setHold(float Celsius) { _holdTemp = Celsius; }
-  float    getHoldTemp() { return _extensionTemp; }
+  float    getHoldTemp() { return _holdTemp; }
 
 
   //  PROCESS CONTROL

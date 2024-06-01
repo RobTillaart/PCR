@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.3.0] - 2024-06-01
 - breaking change 
   - duration in configuration function to **float seconds** as this is more convenient.
+- fix **getHoldTemp()** bug.
 - fix signature of functions in 0.2.1
 - clean up code (remove commented sections).
 - update readme.md
-- update unittests
+- update unit tests
 
 ----
 
