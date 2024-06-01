@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.3.0] - 2024-06-01
 - breaking change 
   - duration in configuration function to **float seconds** as this is more convenient.
+  - update examples to use seconds.
 - fix **getHoldTemp()** bug.
 - fix signature of functions in 0.2.1
 - clean up code (remove commented sections).
+- add **PCR_demo_aquarium.ino** example (for fun).
 - update readme.md
 - update unit tests
 
