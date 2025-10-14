@@ -6,13 +6,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [0.3.1] - 2025-10-14
-- update GitHub actions
-- catch unknown state in process() and debug() - (should not happen)
+## [0.4.0] - 2025-10-14
+- add signalPin in constructor for feedback
+- add **void setSignalLength(uint16_t ms)** 
+- add **uint16_t getSignalLength()**
 - add **uint8_t getPCRState()**
+- catch unknown state in process() and debug() - (should not happen)
 - refactored **process()**
+- update GitHub actions
 - update examples
+- update README.md
 - minor edits
+
+----
 
 ## [0.3.0] - 2024-06-01
 - breaking change

@@ -30,7 +30,7 @@ This library implements a PCR class that helps to control time and temperatures 
 main PCR cycles.
 
 In short a PCR cycle is a process of controlled heating and cooling to let DNA "reproduce"
-to get large quantities. Roughly the amount doubles in every cycle (of step 2,3,4).
+to get large quantities. Roughly the amount doubles in every cycle (of step 2, 3, 4).
 
 ### Steps
 
@@ -45,19 +45,20 @@ This process exists of repeated cycles of the three main steps. (times and temp 
 |  5   |   N   | Elongation      |  70–74°C = 158–165°F  |  05–15 min.  |
 |  6   |   N   | Final Hold      |   4–15°C =  39–59°F   | indefinitely |  final storage
 
-The PCR function **process()** takes care of the repeating of step 2,3 and 4.
+The PCR function **process()** takes care of the repeating of step 2, 3 and 4.
+One needs to call process() as often as possible.
 
 
 Typical core code looks like:
 
 ```cpp
   //  configure all phases
-  pcr.setInitial(98, 10000);  //  temp, ms
-  pcr.setDenature(94.5, 5000);
-  pcr.setAnnealing(54.2, 2000);
-  pcr.setExtension(75.0, 3000);
-  pcr.setElongation(75.0, 3000);
-  pcr.setHold(8.0);
+  pcr.setInitial(98, 1.0);        //  temperature, seconds
+  pcr.setDenature(94.5, 5.5);
+  pcr.setAnnealing(54.2, 2.0);
+  pcr.setExtension(75.0, 3.0);
+  pcr.setElongation(75.0, 3.5);
+  pcr.setHold(8.0);               //  temperature only
   
   pcr.reset(15);  //  iterations.
   //  execute the process.
@@ -133,23 +134,33 @@ Pre 0.3.0 versions are now obsolete.
 
 ### Constructor
 
-- **PCR(uint8_t heatPin, uint8_t coolPin)** constructor defines the hardware pins to which 
-the heater and cooler are connected.
+- **PCR(uint8_t heatPin, uint8_t coolPin, uint8_t signalPin = 255)** constructor defines the 
+hardware pins to which the heater and cooler are connected.
+Also defines a signal pin to connect a buzzer / LED to indicate phase transitions (heartbeat).
+
+### PCR Process
+
 - **void reset(uint16_t iterations)** full stop of the process, also stops heating and cooling,
 resets the state to IDLE and defines the number of iterations for the next run.
 The parameter iterations must be >= 0 so it changed to unsigned int in 0.3.0.
+The process (re)starts by calling **process()**.
 - **uint8_t process(float temperature)** The worker core. This function runs the main process 
-and iterates over the DENATURE, ANNEALING and EXTENSION phase. Returns the current state.  
+and iterates over the **DENATURE**, **ANNEALING** and **EXTENSION** phase. 
+The function returns the current state.
 The user **MUST** provide the actual temperature of the sample so process can heat and cool
 the sample on a need to basis.  
 The user **MUST** call this function as often as possible in a tight loop. 
+
+### State
+
 - **int iterationsLeft()** returns the number of iterations left.
 - **float timeLeft()** estimator of the time left to reach the HOLD state.
 Since 0.3.0 returns its value in seconds. 
 The function assumes it is at the start of a cycle.
 Furthermore it assumes that the duration per phase does not change runtime,
 however it will adapt its estimate after changes are made with a new call.
-
+- **uint8_t getPCRState()** returns current state.
+Note one cannot set the state, except by **reset()**.
 
 ### About phases (state)
 
@@ -174,7 +185,7 @@ See also table in Steps section.
 
 ### 1 Initial phase
 
-This step used in **hot-start PCR** (Wikipedia) to bring the system to starting temperature.
+This step used in **hot-start PCR** (See Wikipedia) to bring the system to starting temperature.
 
 - **void setInitial(float Celsius, float seconds)** Sets temperature and duration.
 - **float getInitialTemp()** returns set value.
@@ -183,6 +194,7 @@ This step used in **hot-start PCR** (Wikipedia) to bring the system to starting 
 ### 2 Denature phase
 
 This step breaks the double DNA helix into two single strands.
+Typical this is the highest temperature of the cycle.
 
 - **void setDenature(float Celsius, float seconds)** Sets temperature and duration.
 - **float getDenatureTemp()** returns set value.
@@ -190,7 +202,7 @@ This step breaks the double DNA helix into two single strands.
 
 ### 3 Annealing phase
 
-This step let **primers** (Wikipedia) connect to the single strands.
+This step let **primers** (See Wikipedia) connect to the single strands.
 The primers create a starting point for the replication.
 The temperature and duration depends on many factors, so very specific for the reaction.
 
@@ -248,6 +260,24 @@ the efficiency of the process. Be aware that the heat() and cool() will block lo
 - **uint16_t getHeatPulseLength()** returns set value.
 
 
+### Signalling new phase
+
+If the signal pin is defined in the constructor, that pin will get HIGH
+for 500 milliseconds (by default) to indicate a new phase has entered.
+One can connect a (built-in) LED or e.g. a buzzer or a stirring device.
+
+The duration can be set by the following function, 0 ==> OFF.
+
+- **void setSignalLength(uint16_t ms)** set pulse duration in milliseconds.
+A value of 0 means OFF. Typical values are steps of 100 ms, (default 500 ms).
+If the value set is larger than phase period signalling will not work as intended..
+- **uint16_t getSignalLength()** returns set value in milliseconds.
+
+If one want a signal only once per iteration or for certain state one could use
+**getPCRState()**, **timeLeft()** and **iterationsLeft()** to build your
+own signalling.
+
+
 ### Debug
 
 - **void debug()** is a function used to output some state to Serial.
@@ -272,16 +302,10 @@ Users can patch this function when needed, or make it empty.
 - PCR scripting language, simple example?
 - add examples
 - add stir pin, to control the stirring of the PCR device.
-- add signal pin to indicate ready by a buzzer or LED.
-  - think of it as heartbeat.
-  - short pulse at beginning of each iteration step
-  - switch pulse on at end of phase
-  - switch pulse off after X millis of start of phase.
-  - **setShortPulseLength(uint16_t ms)** default 1 second?
-- add ready pin? == HOLD State reached?
-- Elaborate debug()
-  - void **debugOn(Stream str = &Serial)** define the stream used.
-  - void **debugOff()** to suppress debug statements
+- Elaborate debug() ?
+  - void **debugStream(Stream str = &Serial)** define the stream used.
+  - void **debugOn()** enable.
+  - void **debugOff()** disable debug statements
   - defaults? backwards compatibility?
 
 
@@ -293,6 +317,8 @@ Users can patch this function when needed, or make it empty.
 - optimize code
   - have an array of times and temperatures to go through.
 - add continuous heating (unsafe mode) versus the current pulsed heating(safe mode).
+- add ready pin? == HOLD State reached? ==> use getPCRState() 
+
 
 ## Support
 

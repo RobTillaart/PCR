@@ -43,6 +43,7 @@ void loop()
   {
     float temp = getTemperature();
     pcr.process(temp);
+
     //  break after a full cycle / day.
     if (pcr.iterationsLeft() == 0) break;
   }

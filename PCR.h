@@ -2,17 +2,20 @@
 //
 //    FILE: PCR.h
 //  AUTHOR: Rob Tillaart
-// VERSION: 0.3.1
+// VERSION: 0.4.0
 //    DATE: 2015-06-10
 // PURPOSE: Arduino library for PCR process control.
 //     URL: https://github.com/RobTillaart/PCR
 //          https://forum.arduino.cc/t/problem-with-arduino-pcr-amplifies-of-dna/314808
 
 
-
 #include "Arduino.h"
 
-#define PCR_LIB_VERSION         (F("0.3.1"))
+#define PCR_LIB_VERSION         (F("0.4.0"))
+
+//  comment next line if no debug output is needed.
+#define PCR_DEBUG   1
+
 
 enum PCRSTATE {
   PCR_STATE_IDLE = 0,
@@ -28,13 +31,15 @@ enum PCRSTATE {
 class PCR
 {
 public:
-  PCR(uint8_t heatPin, uint8_t coolPin)
+  PCR(uint8_t heatPin, uint8_t coolPin, uint8_t signalPin = 255)
   {
     _state = PCR_STATE_IDLE;
     _heatPin = heatPin;
     _coolPin = coolPin;
+    _signalPin = signalPin;
     pinMode(_heatPin, OUTPUT);
     pinMode(_coolPin, OUTPUT);
+    pinMode(_signalPin, OUTPUT);
     off();
   }
 
@@ -48,6 +53,7 @@ public:
   float    getInitialTemp() { return _initialTemp; }
   float    getInitialTime() { return _initialTime * 0.001f; }
 
+
   void     setDenature(float Celsius, float seconds)
   {
     _denatureTemp = Celsius;
@@ -55,6 +61,7 @@ public:
   }
   float    getDenatureTemp() { return _denatureTemp; }
   float    getDenatureTime() { return _denatureTime * 0.001f; }
+
 
   void     setAnnealing(float Celsius, float seconds)
   {
@@ -64,6 +71,7 @@ public:
   float    getAnnealingTemp() { return _annealingTemp; }
   float    getAnnealingTime() { return _annealingTime * 0.001f; }
 
+
   void     setExtension(float Celsius, float seconds)
   {
     _extensionTemp = Celsius;
@@ -72,6 +80,7 @@ public:
   float    getExtensionTemp() { return _extensionTemp; }
   float    getExtensionTime() { return _extensionTime * 0.001f; }
 
+
   void     setElongation(float Celsius, float seconds)
   {
     _elongationTemp = Celsius;
@@ -79,6 +88,7 @@ public:
   }
   float    getElongationTemp() { return _elongationTemp; }
   float    getElongationTime() { return _elongationTime * 0.001f; }
+
 
   void     setHold(float Celsius) { _holdTemp = Celsius; }
   float    getHoldTemp() { return _holdTemp; }
@@ -105,12 +115,22 @@ public:
   {
     uint32_t now = millis();
     _temperature = temperature;
+
+    //  switch off the signal.
+    if (_pulse)
+    {
+      if (now - _startTime >= _signalPulseLength)
+      {
+        _pulse = false;
+        digitalWrite(_signalPin, LOW);
+      }
+    }
+
+    uint8_t prevState = _state;
     switch(_state)
     {
       case PCR_STATE_IDLE:
         _state = PCR_STATE_INITIAL;
-        _startTime = now;
-        debug();
       break;
 
       case PCR_STATE_INITIAL:
@@ -120,9 +140,8 @@ public:
         if (now - _startTime >= _initialTime)
         {
           _state = PCR_STATE_DENATURE;
-          _startTime = now;
-          debug();
         }
+
       break;
 
       case PCR_STATE_DENATURE:
@@ -132,8 +151,6 @@ public:
         if (now - _startTime >= _denatureTime)
         {
           _state = PCR_STATE_ANNEALING;
-          _startTime = now;
-          debug();
         }
       break;
 
@@ -144,8 +161,6 @@ public:
         if (now - _startTime >= _annealingTime)
         {
           _state = PCR_STATE_EXTENSION;
-          _startTime = now;
-          debug();
         }
       break;
 
@@ -158,8 +173,6 @@ public:
           _cycles--;
           if (_cycles > 0) _state = PCR_STATE_DENATURE;
           else _state = PCR_STATE_ELONGATION;
-          _startTime = now;
-          debug();
         }
       break;
 
@@ -170,8 +183,6 @@ public:
         if (now - _startTime >= _elongationTime)
         {
           _state = PCR_STATE_HOLD;
-          _startTime = now;
-          debug();
         }
       break;
 
@@ -184,6 +195,17 @@ public:
       default:
         Serial.println("UNKNOWN STATE ERROR!");
       break;
+    }
+    //  new state ? => actions.
+    if (prevState != _state)
+    {
+      _startTime = now;
+      if (_signalPulseLength > 0)
+      {
+        _pulse = true;
+        digitalWrite(_signalPin, HIGH);
+      }
+      debug();
     }
     return _state;
   }
@@ -225,6 +247,7 @@ public:
   {
     digitalWrite(_heatPin, LOW);
     digitalWrite(_coolPin, LOW);
+    digitalWrite(_signalPin, LOW);
   }
 
   //  estimator timeLeft, assumes process is not stopped.
@@ -240,25 +263,40 @@ public:
     return sum * 0.001f;
   }
 
+  //  signal pulses at phase change.
+  //  0 == OFF, typical steps of 100 milliseconds.
+  void setSignalLength(uint16_t ms)
+  {
+    _signalPulseLength = ms;
+  }
+
+  uint16_t getSignalLength()
+  {
+    return _signalPulseLength;
+  }
+
+
 
 protected:
   //  development.
   void debug()
   {
+#ifdef PCR_DEBUG
     //  log for seeing state transitions.
     Serial.print(_startTime);
     Serial.print("\t");
     Serial.print(_cycles);
     //  use an array?
-    if (_state == PCR_STATE_DENATURE)        Serial.println("\tDenature");
-    else if (_state == PCR_STATE_ANNEALING)  Serial.println("\tAnnealing");
-    else if (_state == PCR_STATE_EXTENSION)  Serial.println("\tExtension");
+    if (_state == PCR_STATE_DENATURE)        Serial.println(F("\tDenature"));
+    else if (_state == PCR_STATE_ANNEALING)  Serial.println(F("\tAnnealing"));
+    else if (_state == PCR_STATE_EXTENSION)  Serial.println(F("\tExtension"));
     //  less used
-    else if (_state == PCR_STATE_ELONGATION) Serial.println("\tElongation");
-    else if (_state == PCR_STATE_IDLE)       Serial.println("\tIdle");
-    else if (_state == PCR_STATE_INITIAL)    Serial.println("\tInitialize");
-    else if (_state == PCR_STATE_HOLD)       Serial.println("\tHold");
-    else                                     Serial.println("\tUnknown");
+    else if (_state == PCR_STATE_ELONGATION) Serial.println(F("\tElongation"));
+    else if (_state == PCR_STATE_IDLE)       Serial.println(F("\tIdle"));
+    else if (_state == PCR_STATE_INITIAL)    Serial.println(F("\tInitialize"));
+    else if (_state == PCR_STATE_HOLD)       Serial.println(F("\tHold"));
+    else                                     Serial.println(F("\tUnknown"));
+#endif
   }
 
   //  temperatures in °Celsius
@@ -277,12 +315,18 @@ protected:
 
   float    _temperature = 0;
 
-  int      _heatPin = 0;
-  int      _coolPin = 0;
+  //  IO pins
+  uint8_t  _heatPin = 255;
+  uint8_t  _coolPin = 255;
+  uint8_t  _signalPin = 255;
+
   PCRSTATE _state = PCR_STATE_IDLE;
   uint16_t _cycles = 0;
   uint32_t _startTime = 0;
   uint16_t _heatPulseLength = 10;  //  milliseconds
+
+  uint16_t _signalPulseLength = 500;  //  milliseconds
+  bool     _pulse = false;
 };
 
 
