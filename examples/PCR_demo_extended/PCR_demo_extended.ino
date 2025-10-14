@@ -9,7 +9,7 @@
 #include "PCR.h"
 
 
-PCR pcr(8, 9, 13);  //  heatPin, coolPin
+PCR pcr(8, 9, 13);  //  heatPin, coolPin, signalPin (built-in LED UNO = 13)
 
 
 float getTemperature()
