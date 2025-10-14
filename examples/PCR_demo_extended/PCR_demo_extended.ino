@@ -35,7 +35,7 @@ void setup()
   pcr.setHold(8.0);            //  temp only
 
   pcr.reset(15);  //  iterations.
-  Serial.print("Estimated time (ms): ");
+  Serial.print("Estimated time (seconds): ");
   Serial.println(pcr.timeLeft());
 
   while (pcr.iterationsLeft() > 0)

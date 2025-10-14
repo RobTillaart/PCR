@@ -24,13 +24,15 @@ From Wikipedia:
 _The polymerase chain reaction (PCR) is a method widely used to make millions to 
 billions of copies of a specific DNA sample rapidly, allowing scientists to amplify 
 a very small sample of DNA (or a part of it) sufficiently to enable detailed study. 
-PCR was invented in 1983 by American biochemist Kary Mullis at Cetus Corporation._
+PCR was invented in 1983 by American biochemist **Kary Mullis** at Cetus Corporation._
 
 This library implements a PCR class that helps to control time and temperatures of the 
 main PCR cycles.
 
 In short a PCR cycle is a process of controlled heating and cooling to let DNA "reproduce"
 to get large quantities. Roughly the amount doubles in every cycle (of step 2,3,4).
+
+### Steps
 
 This process exists of repeated cycles of the three main steps. (times and temp from Wikipedia)
 
@@ -71,7 +73,7 @@ Typical core code looks like:
 to replace professional equipment.
 
 
-#### Hardware notes
+### Hardware notes
 
 The hardware setup needs a device that can be cooled or heated depending on the phase of the cycle.
 Furthermore the hardware setup needs to provide an actual temperature to guide the process.
@@ -94,7 +96,7 @@ This latter can be an DS18B20 especially the waterproof version.
 ```
 
 
-#### Other applications
+### Other applications
 
 The PCR class can be used to manage other temperature control processes.
 Some examples:
@@ -103,7 +105,7 @@ Some examples:
 - control an ice making machine.
 
 
-#### Breaking change 0.3.0
+### Breaking change 0.3.0
 
 Since 0.3.0 the timing of the 6 steps is done in seconds instead of milliseconds.
 As the steps take up to 15 minutes of more, defining the time in seconds is a more
@@ -113,11 +115,12 @@ a step as taking 15.75 seconds = 15750 milliseconds.
 
 Pre 0.3.0 versions are now obsolete.
 
-#### Related
+### Related
 
 - https://en.wikipedia.org/wiki/Polymerase_chain_reaction
 - https://github.com/RobTillaart/PCR
 - https://github.com/RobTillaart/Temperature  scale conversions.
+- https://github.com/RobTillaart/HeartBeat  to add "process is alive" indication
 - https://forum.arduino.cc/t/problem-with-arduino-pcr-amplifies-of-dna/314808 
 - https://www.scientificamerican.com/article/the-unusual-origin-of-the-polymeras/ (paid site)
 
@@ -128,7 +131,7 @@ Pre 0.3.0 versions are now obsolete.
 #include "PCR.h"
 ```
 
-#### Constructor
+### Constructor
 
 - **PCR(uint8_t heatPin, uint8_t coolPin)** constructor defines the hardware pins to which 
 the heater and cooler are connected.
@@ -142,15 +145,15 @@ the sample on a need to basis.
 The user **MUST** call this function as often as possible in a tight loop. 
 - **int iterationsLeft()** returns the number of iterations left.
 - **float timeLeft()** estimator of the time left to reach the HOLD state.
-Since 0.3.0 returns its value in seconds.
-This function assumes that the duration per phase does not change runtime,
-however it will adapt its estimate.
-Returns the value in milliseconds. 
+Since 0.3.0 returns its value in seconds. 
+The function assumes it is at the start of a cycle.
+Furthermore it assumes that the duration per phase does not change runtime,
+however it will adapt its estimate after changes are made with a new call.
 
 
-#### About phases
+### About phases (state)
 
-Temperatures are in **°Celsius**, timing is in **seconds** (since 0.3.0 version).  
+Temperatures are defined in **°Celsius**, timing is in **seconds** (since 0.3.0 version).  
 
 The timing is the time that the process will be in this state, so it includes
 the time to heat / cool to reach the temperature defined.
@@ -164,8 +167,12 @@ Note that the parameters of the phases can change while the process is running,
 e.g. one can increase the duration of the extension phase per cycle to give 
 that part of the PCR process more time (adjust to concentration?).
 
+- **getPCRState()** returns current state. Allows users to add actions on
+certain states (phases). Note that **process()** also returns current state.
 
-#### 1 Initial phase
+See also table in Steps section.
+
+### 1 Initial phase
 
 This step used in **hot-start PCR** (Wikipedia) to bring the system to starting temperature.
 
@@ -173,7 +180,7 @@ This step used in **hot-start PCR** (Wikipedia) to bring the system to starting 
 - **float getInitialTemp()** returns set value.
 - **float getInitialTime()** returns set value.
 
-#### 2 Denature phase
+### 2 Denature phase
 
 This step breaks the double DNA helix into two single strands.
 
@@ -181,7 +188,7 @@ This step breaks the double DNA helix into two single strands.
 - **float getDenatureTemp()** returns set value.
 - **float getDenatureTime()** returns set value.
 
-#### 3 Annealing phase
+### 3 Annealing phase
 
 This step let **primers** (Wikipedia) connect to the single strands.
 The primers create a starting point for the replication.
@@ -191,7 +198,7 @@ The temperature and duration depends on many factors, so very specific for the r
 - **float getAnnealingTemp()** returns set value.
 - **float getAnnealingTime()** returns set value.
 
-#### 4 Extension phase
+### 4 Extension phase
 
 This step extends the primers with **dNTP's** nucleotides (Wikipedia) to complete
 the duplication process.
@@ -200,7 +207,7 @@ the duplication process.
 - **float getExtensionTemp()** returns set value.
 - **float getExtensionTime()** returns set value.
 
-#### 5 Elongation phase
+### 5 Elongation phase
 
 This step is used to finalize the remaining DNA strands that are not fully extended
 in step 4 Extension phase.
@@ -209,7 +216,7 @@ in step 4 Extension phase.
 - **float getElongationTemp()** returns set value.
 - **float getElongationTime()** returns set value.
 
-#### 6 Hold phase
+### 6 Hold phase
 
 The Hold phase goes on forever and is meant to store the result on a cool temperature
 for final storage.
@@ -217,7 +224,7 @@ for final storage.
 - **void setHold(float Celsius)** Sets temperature for final phase.
 - **float getHoldTemp()** returns set value.
 
-#### Heater, cooler control
+### Heater, cooler control
 
 The temperature control functions are made public so the user can use these directly 
 from their own code.
@@ -229,7 +236,7 @@ Drawback is that the pulsed behaviour makes the process a bit slower to heat up 
 Therefore the length of the period can be adjusted between 0 and 1000 milliseconds to increase
 the efficiency of the process. Be aware that the heat() and cool() will block longer.
 
-- **void heat()** Switches off cooler first, and then switches the heater for (default) 
+- **void heat()** Switches off cooler first, and then switches the heater on for (default) 
 10 milliseconds. Before return the heater is switched off again.
 - **void cool()** switch on the cooler for (default) 10 milliseconds. Switches off heater first.
 - **void off()** switch off both heater and cooler.
@@ -241,7 +248,7 @@ the efficiency of the process. Be aware that the heat() and cool() will block lo
 - **uint16_t getHeatPulseLength()** returns set value.
 
 
-#### Debug
+### Debug
 
 - **void debug()** is a function used to output some state to Serial.
 Users can patch this function when needed, or make it empty.
@@ -265,7 +272,18 @@ Users can patch this function when needed, or make it empty.
 - PCR scripting language, simple example?
 - add examples
 - add stir pin, to control the stirring of the PCR device.
-- add signalling pin to indicate ready by a buzzer.
+- add signal pin to indicate ready by a buzzer or LED.
+  - think of it as heartbeat.
+  - short pulse at beginning of each iteration step
+  - switch pulse on at end of phase
+  - switch pulse off after X millis of start of phase.
+  - **setShortPulseLength(uint16_t ms)** default 1 second?
+- add ready pin? == HOLD State reached?
+- Elaborate debug()
+  - void **debugOn(Stream str = &Serial)** define the stream used.
+  - void **debugOff()** to suppress debug statements
+  - defaults? backwards compatibility?
+
 
 #### Wont
 

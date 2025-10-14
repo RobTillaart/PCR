@@ -52,7 +52,7 @@ void setup()
   pcr[0].reset(15);  //  iterations.
   pcr[1].reset(15);
   pcr[2].reset(15);
-  Serial.print("Estimated time (ms): ");
+  Serial.print("Estimated time (seconds): ");
   Serial.print(pcr[0].timeLeft());
   Serial.print("\t");
   Serial.print(pcr[1].timeLeft());

@@ -6,8 +6,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.3.1] - 2025-10-14
+- update GitHub actions
+- catch unknown state in process() and debug() - (should not happen)
+- add **uint8_t getPCRState()**
+- refactored **process()**
+- update examples
+- minor edits
+
 ## [0.3.0] - 2024-06-01
-- breaking change 
+- breaking change
   - duration in configuration function to **float seconds** as this is more convenient.
   - update examples to use seconds.
 - fix **getHoldTemp()** bug.
