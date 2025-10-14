@@ -61,8 +61,9 @@ Typical core code looks like:
   pcr.setHold(8.0);               //  temperature only
   
   pcr.reset(15);  //  iterations.
+
   //  execute the process.
-  while (pcr.iterationsLeft() > 0)
+  while (pcr.getPCRState() != PCR_STATE_HOLD)
   {
     float temp = getTemperature();
     pcr.process(temp);
@@ -85,11 +86,12 @@ This latter can be an DS18B20 especially the waterproof version.
      +---------------+                    +---------------+
      |               |                    |               |
      |               |                    |               |
+     |    signalPin o|----(X)---GND       |               |
+     |               |                    |  sensor       |
      |      heatPin o|------------------->|o HEATER       |
      |      coolPin o|------------------->|o COOLER       |
      |               |                    |               |
      |    getTemp() O|<-------------------|o temperature  |
-     |               |                    |  sensor       |
      |               |                    |               |
      |               |                    |               |
      |               |                    |               |
