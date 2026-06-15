@@ -112,6 +112,8 @@ This latter can be an DS18B20 especially the waterproof version.
      +---------------+                    +---------------+
 ```
 
+(X) can be a buzzer of a LED.
+
 
 ### Other applications
 
